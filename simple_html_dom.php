@@ -19,7 +19,7 @@
  * Paperg - Added the forceTagsClosed to the dom constructor.  Forcing tags closed is great for malformed html, but it CAN lead to parsing errors.
  * Allow the user to tell us how much they trust the html.
  * Paperg add the text and plaintext to the selectors for the find syntax.  plaintext implies text in the innertext of a node.  text implies that the tag is a text node.
- * This allows for us to find tags based on the text they contain.
+ * This allows for us to find gs based on the text they contain.
  * Create find_ancestor_tag to see if a tag is - at any level - inside of another specific tag.
  * Paperg: added parse_charset so that we know about the character set of the source document.
  *  NOTE:  If the user's system has a routine called get_last_retrieve_url_contents_content_type availalbe, we will assume it's returning the content-type header from the
@@ -63,7 +63,7 @@ define('HDOM_INFO_ENDSPACE',7);
 define('DEFAULT_TARGET_CHARSET', 'UTF-8');
 define('DEFAULT_BR_TEXT', "\r\n");
 define('DEFAULT_SPAN_TEXT', " ");
-define('MAX_FILE_SIZE', 600000);
+define('MAX_FILE_SIZE', 6000000);
 // helper functions
 // -----------------------------------------------------------------------------
 // get html dom from file

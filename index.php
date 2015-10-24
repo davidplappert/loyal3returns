@@ -10,6 +10,7 @@ require_once("simple_html_dom.php");
 
 $login_url = "https://www.loyal3.com/login";
 $transaction_url = "https://www.loyal3.com/accounts/transactions/index";
+$filename = $email.'.cache';
 
 function login()
 {
@@ -39,8 +40,14 @@ function login()
 	$preformLogin = curler($url = $login_url, $fields = $fields);
 }
 
+function getTransactions()
+{
+	global $transaction_url;
+	$html = curler($url = $transaction_url);
+	return $html;
+}
 
-function curler($url,$fields = FALSE,$useCookies = FALSE)
+function curler($url,$fields = FALSE)
 {
 	$ch = curl_init();
 	curl_setopt($ch, CURLOPT_URL, $url);
@@ -57,13 +64,11 @@ function curler($url,$fields = FALSE,$useCookies = FALSE)
 		}
 		curl_setopt($ch,CURLOPT_POST, count($fields));
 		curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
-		$useCookies = TRUE;
 	}
-	if ($useCookies){
+	if (file_exists('cookie.txt')){
 		curl_setopt($ch, CURLOPT_COOKIEFILE, 'cookie.txt');
-	}else{
-		curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 	}
+	curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 	// Download the given URL, and return output
 	$output = curl_exec($ch);
 	//Look For Curl Errors
@@ -80,25 +85,54 @@ function curler($url,$fields = FALSE,$useCookies = FALSE)
 	return $output;
 }
 
-
-function getTransactions()
+function parseTransactions($transactionHTML)
 {
-	$transFile = checkCache();
-	if(!$transFile){
-		$transFile = refreshCache();
+	$html = str_get_html(htmlspecialchars($transactionHTML));
+	$rows = $html->find('div.l3-transactions');
+	var_dump($rows);
+
+
+	$stocks = array();
+	foreach ($rows as $tr){
+		print_r($tr);
+		//$desc = $tr->find("td[data-label='description']")->plaintext;
+		//echo $desc;
 	}
+	return $stocks;
+}
+
+function stockValues()
+{
+	$transactionHTML = checkCache();
+	if(!$transactionHTML){
+		$transactionHTML = refreshCache();
+	}
+	$stocks = parseTransactions($transactionHTML);
+	//print_r($stocks);
 }
 
 function checkCache()
 {
+	global $filename;
+	if (file_exists($filename)){
+		if (filemtime($filename) > time()-(60*60*24)){
+			return file_get_contents($filename);
+		}
+	}
 	return FALSE;
 }
 
 function refreshCache()
 {
+	global $filename;
 	login();
-	unlink('cookie.txt');
+	//write file to disk
+	$fh = fopen($filename, 'w') or die("can't open file");
+	fwrite($fh, getTransactions());
+	fclose($fh);
+	//delete the cookie file
+	//unlink('cookie.txt');
+	return checkCache();
 }
 
-echo "<pre>";
-getTransactions();
+stockValues();
