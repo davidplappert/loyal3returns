@@ -65,7 +65,7 @@ function curler($url,$fields = FALSE,$useCookies = FALSE)
 		curl_setopt($ch, CURLOPT_COOKIEJAR, 'cookie.txt');
 	}
 	// Download the given URL, and return output
-    $output = curl_exec($ch);
+	$output = curl_exec($ch);
 	//Look For Curl Errors
 	if (curl_errno($ch)){
 		echo 'Curl error: '.curl_error($ch).', '.curl_errno($ch);
@@ -76,8 +76,8 @@ function curler($url,$fields = FALSE,$useCookies = FALSE)
 	echo $httpCode;
 	*/
 	// Close the cURL resource, and free system resources
-    curl_close($ch);
-    return $output;
+	curl_close($ch);
+	return $output;
 }
 
 
@@ -87,8 +87,6 @@ function getTransactions()
 	if(!$transFile){
 		$transFile = refreshCache();
 	}
-
-
 }
 
 function checkCache()
@@ -103,7 +101,4 @@ function refreshCache()
 }
 
 echo "<pre>";
-
 getTransactions();
-
-?>
